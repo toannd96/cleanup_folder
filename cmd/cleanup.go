@@ -15,7 +15,7 @@ import (
 
 var cleanupCmd = &cobra.Command{
 	Use:   "folder [max number of hours (integer) the old folder to be cleanup] [target folder]",
-	Short: "Remove old folder by max number of hours of exist",
+	Short: "Remove old folder by max number of hours exist",
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		number, err := strconv.ParseInt(args[0], 10, 64)
