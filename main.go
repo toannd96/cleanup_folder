@@ -1,6 +1,8 @@
 package main
 
-import "cleanup/cmd"
+import (
+	"cleanup/cmd"
+)
 
 func main() {
 	cmd.Execute()

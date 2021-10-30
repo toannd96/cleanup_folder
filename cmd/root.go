@@ -7,25 +7,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	version bool
-)
-
 func init() {
 	cobra.OnInitialize()
-	rootCmd.Flags().BoolVarP(&version, "version", "v", false, "show current version of CLI")
+	// rootCmd.Flags().BoolVarP(&version, "version", "v", false, "show current version of CLI")
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "cleanup",
-	Short: "A simple CLI use to cleanup old folder",
-	Run: func(cmd *cobra.Command, args []string) {
-	},
+	Use:     "cleanup",
+	Short:   "A simple CLI use to cleanup old folder",
+	Version: "1.0",
 }
 
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Println(err)
+	err := rootCmd.Execute()
+	if err != nil {
+		fmt.Println(err.Error())
 		os.Exit(1)
 	}
 }
