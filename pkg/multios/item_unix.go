@@ -1,4 +1,4 @@
-package pkg
+package multios
 
 import (
 	"io/fs"

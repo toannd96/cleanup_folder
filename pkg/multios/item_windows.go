@@ -1,4 +1,4 @@
-package pkg
+package multios
 
 func Item(fi fs.FileInfo) time.Time {
 	var mtimeLocal time.Time
