@@ -9,7 +9,6 @@ import (
 
 func init() {
 	cobra.OnInitialize()
-	// rootCmd.Flags().BoolVarP(&version, "version", "v", false, "show current version of CLI")
 }
 
 var rootCmd = &cobra.Command{

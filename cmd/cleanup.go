@@ -8,30 +8,22 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	str2duration "github.com/xhit/go-str2duration/v2"
 )
 
-var (
-	age    string
-	folder string
+const (
+	// maxAge is the default age after which folder
+	// are considered old
+	maxAge = 1 * time.Minute
 )
 
 var cleanupCmd = &cobra.Command{
-	Use:   "folder",
+	Use:   "folder [target folder]",
 	Short: "Remove old folder",
-	Args:  cobra.ExactArgs(2),
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		age = args[0]
-		folder = args[1]
+		folder := args[0]
 
-		// convert string max age old folder from string to time duration
-		maxAge, err := str2duration.ParseDuration(age)
-		if err != nil {
-			fmt.Println(err.Error())
-			os.Exit(1)
-		}
-
-		oldCacheDirs, err := old(folder, maxAge)
+		oldCacheDirs, err := old(folder)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
@@ -54,13 +46,11 @@ var cleanupCmd = &cobra.Command{
 }
 
 func init() {
-	cleanupCmd.Flags().StringVarP(&age, "age", "a", age, "Max age old folder to be cleanup example 1s, 1m, 1h, 1d, 1w, 1w2d3s")
-	cleanupCmd.Flags().StringVarP(&folder, "folder", folder, "/home/dactoan/upload", "Target folder to be cleanup")
 	rootCmd.AddCommand(cleanupCmd)
 }
 
 // returns the list of directory.
-func listDirs(baseDir string, maxAge time.Duration) ([]os.FileInfo, error) {
+func listDirs(baseDir string) ([]os.FileInfo, error) {
 	f, err := os.Open(baseDir)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
@@ -95,8 +85,8 @@ func listDirs(baseDir string, maxAge time.Duration) ([]os.FileInfo, error) {
 }
 
 // returns the list of folder older than max.
-func olderThan(baseDir string, maxAge time.Duration) ([]os.FileInfo, error) {
-	entries, err := listDirs(baseDir, maxAge)
+func olderThan(baseDir string) ([]os.FileInfo, error) {
+	entries, err := listDirs(baseDir)
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)
@@ -104,7 +94,7 @@ func olderThan(baseDir string, maxAge time.Duration) ([]os.FileInfo, error) {
 
 	var oldCacheDirs []os.FileInfo
 	for _, fi := range entries {
-		if !isOld(fi.ModTime(), maxAge) {
+		if !isOld(fi.ModTime()) {
 			continue
 		}
 		oldCacheDirs = append(oldCacheDirs, fi)
@@ -113,14 +103,13 @@ func olderThan(baseDir string, maxAge time.Duration) ([]os.FileInfo, error) {
 	return oldCacheDirs, nil
 }
 
-// returns a list of folder with a modification time of more
-// than 30 days ago.
-func old(basedir string, maxAge time.Duration) ([]os.FileInfo, error) {
-	return olderThan(basedir, maxAge)
+// returns a list of folder with a modification time
+func old(basedir string) ([]os.FileInfo, error) {
+	return olderThan(basedir)
 }
 
 // returns true if the timestamp is considered old.
-func isOld(t time.Time, maxAge time.Duration) bool {
+func isOld(t time.Time) bool {
 	oldest := time.Now().Add(-maxAge)
 	return t.Before(oldest)
 }
