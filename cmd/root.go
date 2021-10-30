@@ -14,7 +14,7 @@ func init() {
 var rootCmd = &cobra.Command{
 	Use:     "cleanup",
 	Short:   "A simple CLI use to cleanup old folder",
-	Version: "1.0",
+	Version: "1.0.0",
 }
 
 func Execute() {
