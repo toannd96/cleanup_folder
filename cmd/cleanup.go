@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+
+	pkg "cleanup/pkg"
 )
 
 var cleanupCmd = &cobra.Command{
@@ -91,7 +93,7 @@ func olderThan(baseDir string, maxAge time.Duration) ([]os.FileInfo, error) {
 
 	var oldCacheDirs []os.FileInfo
 	for _, fi := range entries {
-		if !isOld(fi.ModTime(), maxAge) {
+		if !isOld(pkg.Item(fi), maxAge) {
 			continue
 		}
 		oldCacheDirs = append(oldCacheDirs, fi)
